@@ -1,20 +1,40 @@
 package SDES;
 
-import java.util.Arrays;
+import java.util.*;
 
 public class Main {
 
     public static int[] GlobalK1;
     public static int[] GlobalK2;
+    static int keyNumber = 0;
+    static Map<String, int[]> keys = new HashMap<>();
 
     public static void main(String[] args) {
-        subkeysGeneration();
-        Encryption();
-
+        System.out.println("Put the plainText to be encrypted: ");
+        Scanner scanner = new Scanner(System.in);
+        String plainText = scanner.nextLine();
+        StringBuilder plainTextBuilder = new StringBuilder(plainText);
+        StringBuilder cipherTextBuilder = new StringBuilder();
+        for(int i = 0; i < plainTextBuilder.length(); i++){
+            subkeysGeneration();
+            char character = plainTextBuilder.charAt(i);
+            int[] currentBlock = Util.charToEightBitBlock(character);
+            int[] encryptedEightBitBlock = Encryption(currentBlock);
+            char cipherChar = Util.eightBitBlockToChar(encryptedEightBitBlock);
+            cipherTextBuilder.append(cipherChar);
+        }
+        System.out.println("Plaintext: "+plainTextBuilder);
+        System.out.println("Ciphertext: "+cipherTextBuilder);
+        System.out.println("Keys: ");
+        for (Map.Entry<String, int[]> entry : keys.entrySet()) {
+            System.out.println(entry.getKey() + ", Valor: " + Arrays.toString(entry.getValue()));
+        }
     }
 
     public static void subkeysGeneration(){
-        int[] key = SubkeysGenerator.generateKey(new int[]{1,0,1,0,0,0,0,0,1,0});
+        int[] key = SubkeysGenerator.generateKey();
+        keys.put("key "+keyNumber,key);
+        keyNumber++;
 
         System.out.println("------------------------ First, apply P10 to the key and circular left shift to L and R" +
                 " of the result ------------------------");
@@ -69,15 +89,16 @@ public class Main {
         Util.printBits("K2: ", K2);
         GlobalK1 = K1;
         GlobalK2 = K2;
+
     }
 
-    public static void Encryption(){
+    public static int[] Encryption(int [] currentBlock){
         System.out.println("------------------------ ENCRYPTION PROCESS" +
                 " ------------------------");
 
         System.out.println("------------------------ Apply Initial Permutation" +
                 " ------------------------");
-        int[] permutedBlock = Encryption.initialPermutation(new int[]{1,0,1,1,1,1,0,1});
+        int[] permutedBlock = Encryption.initialPermutation(currentBlock);
 
         int[] L = Arrays.copyOfRange(permutedBlock, 0, permutedBlock.length/2);
         Util.printBits("L: ", L);
@@ -108,6 +129,7 @@ public class Main {
         Util.printBits("Inversed IP applied: ", encrypted8BitBlock);
         Util.printBits("Encrypted 8-bit block: ", encrypted8BitBlock);
 
+        return encrypted8BitBlock;
     }
 
 }
