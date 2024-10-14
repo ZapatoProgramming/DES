@@ -12,14 +12,19 @@ public class Util {
                 .collect(Collectors.joining()));
     }
 
-    public static void printBits(int[] bits) {
-        System.out.println(Arrays.stream(bits)
-                .mapToObj(String::valueOf)
-                .collect(Collectors.joining()));
-    }
-
     public static int[] mergeArrays(int[] arr1, int[] arr2) {
         return IntStream.concat(Arrays.stream(arr1), Arrays.stream(arr2))
                 .toArray();
     }
+
+    public static void printMatrix(String message, int[][] matrix) {
+        System.out.println(message);
+        for (int[] row : matrix) {
+            for (int element : row) {
+                System.out.print(element + " ");
+            }
+            System.out.println();
+        }
+    }
+
 }
