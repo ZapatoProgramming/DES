@@ -1,2 +1,2 @@
 # DES
-SDES and Enhanced SDES
+SDES and Enhanced SDES implemented in java
