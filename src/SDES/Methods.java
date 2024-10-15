@@ -1,6 +1,6 @@
 package SDES;
 
-public class Encryption {
+public class Methods {
     public static int[] initialPermutation(int[] eightBlockBits){
 
         Util.printBits("8-bit block: ", eightBlockBits);
@@ -40,9 +40,9 @@ public class Encryption {
     public static int[] f_k(int[] L, int[] R, int[] sk) {
         System.out.println("------------------------ First get F(R,SK)" +
                 " -----------");
-        int[] EP = Encryption.expansionPermutation(R);
+        int[] EP = Methods.expansionPermutation(R);
 
-        int[] resultXOR = Encryption.XOR(EP, sk);
+        int[] resultXOR = Methods.XOR(EP, sk);
 
         int[][] matrix = new int[][]{
                 {resultXOR[0], resultXOR[1], resultXOR[2], resultXOR[3]},

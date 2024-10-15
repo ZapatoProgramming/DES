@@ -6,15 +6,24 @@ public class Main {
 
     public static int[] GlobalK1;
     public static int[] GlobalK2;
-    static int keyNumber = 0;
-    static Map<String, int[]> keys = new HashMap<>();
+    static List< int[]> keys = new ArrayList<>();
+    static StringBuilder cipherTextBuilder = new StringBuilder();
 
     public static void main(String[] args) {
         System.out.println("Put the plainText to be encrypted: ");
         Scanner scanner = new Scanner(System.in);
         String plainText = scanner.nextLine();
         StringBuilder plainTextBuilder = new StringBuilder(plainText);
-        StringBuilder cipherTextBuilder = new StringBuilder();
+        encryptEachBlock(plainTextBuilder);
+        System.out.println("Plaintext: "+plainTextBuilder);
+        System.out.println("Ciphertext: "+cipherTextBuilder);
+        System.out.println("Keys: ");
+        for (int[] key : keys) {
+            System.out.println(Arrays.toString(key));
+        }
+    }
+
+    public static void encryptEachBlock(StringBuilder plainTextBuilder){
         for(int i = 0; i < plainTextBuilder.length(); i++){
             subkeysGeneration();
             char character = plainTextBuilder.charAt(i);
@@ -23,18 +32,11 @@ public class Main {
             char cipherChar = Util.eightBitBlockToChar(encryptedEightBitBlock);
             cipherTextBuilder.append(cipherChar);
         }
-        System.out.println("Plaintext: "+plainTextBuilder);
-        System.out.println("Ciphertext: "+cipherTextBuilder);
-        System.out.println("Keys: ");
-        for (Map.Entry<String, int[]> entry : keys.entrySet()) {
-            System.out.println(entry.getKey() + ", Valor: " + Arrays.toString(entry.getValue()));
-        }
     }
 
     public static void subkeysGeneration(){
         int[] key = SubkeysGenerator.generateKey();
-        keys.put("key "+keyNumber,key);
-        keyNumber++;
+        keys.add(key);
 
         System.out.println("------------------------ First, apply P10 to the key and circular left shift to L and R" +
                 " of the result ------------------------");
@@ -98,7 +100,7 @@ public class Main {
 
         System.out.println("------------------------ Apply Initial Permutation" +
                 " ------------------------");
-        int[] permutedBlock = Encryption.initialPermutation(currentBlock);
+        int[] permutedBlock = Methods.initialPermutation(currentBlock);
 
         int[] L = Arrays.copyOfRange(permutedBlock, 0, permutedBlock.length/2);
         Util.printBits("L: ", L);
@@ -108,7 +110,7 @@ public class Main {
 
         System.out.println("------------------------ Apply f_k with SK = K2" +
                 " ---------------------------------");
-        int[] resultFk = Encryption.f_k(L,R,GlobalK1);
+        int[] resultFk = Methods.f_k(L,R,GlobalK1);
         Util.printBits("Result of fk: ", resultFk);
 
         System.out.println("------------------------ Swap L and R" +
@@ -120,12 +122,12 @@ public class Main {
 
         System.out.println("------------------------ Apply f_k with SK = K2" +
                 " ---------------------------------");
-        resultFk = Encryption.f_k(L,R,GlobalK2);
+        resultFk = Methods.f_k(L,R,GlobalK2);
         Util.printBits("Result of fk: ", resultFk);
 
         System.out.println("------------------------ Finally apply Inversed IP" +
                 " ---------------------------------");
-        int[] encrypted8BitBlock = Encryption.inversedIP(resultFk);
+        int[] encrypted8BitBlock = Methods.inversedIP(resultFk);
         Util.printBits("Inversed IP applied: ", encrypted8BitBlock);
         Util.printBits("Encrypted 8-bit block: ", encrypted8BitBlock);
 
