@@ -15,7 +15,7 @@ public class SubkeysGenerator {
 
         String BitString = String.format("%10s", Integer.toBinaryString(key))
                 .replace(' ', '0');
-        System.out.printf("Llave generada: %s%n", BitString);
+        System.out.printf("Generated key: %s%n", BitString);
 
         int[] bitArray = new int[10];
         for (int i = 0; i < bitArray.length; i++) {

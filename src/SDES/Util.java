@@ -50,4 +50,15 @@ public class Util {
         return (char) asciiValue;
     }
 
+    public static int[] parseKeyInput(String keyInput) {
+        int[] key = new int[8];
+        for (int i = 0; i < 8; i++) {
+            char bit = keyInput.charAt(i);
+            if (bit == '0' || bit == '1') {
+                key[i] = bit - '0';
+            }
+        }
+        return key;
+    }
+
 }
