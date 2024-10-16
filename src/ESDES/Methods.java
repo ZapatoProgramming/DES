@@ -3,6 +3,7 @@ package ESDES;
 import java.util.Arrays;
 
 public class Methods {
+    static boolean debug = false;
     public static char[][] columnTranspositionWithMultipleRounds(char[][] matrix,int[] randomNumber, int rounds){
         System.out.println("------------------------ First we fill the matrix with the plain text --------------------");
         System.out.println("Matrix: ");
@@ -61,8 +62,8 @@ public class Methods {
     public static char[][] inverseColumnTranspositionMultipleRounds(char[][] matrix, int[] randomNumber, int rounds){
         for (int r = 0; r < rounds; r++) {
             matrix = inverseColumnTransposition(matrix, randomNumber);
-            System.out.println("Después de la ronda " + (r + 1) + ":");
-            Util.printMatrix(matrix);
+            if(debug) System.out.println("Después de la ronda " + (r + 1) + ":");
+            if(debug) Util.printMatrix(matrix);
         }
         return matrix;
     }

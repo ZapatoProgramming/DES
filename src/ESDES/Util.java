@@ -30,8 +30,7 @@ public class Util {
         for (int i = 0; i < dimension; i++) {
             for (int j = 0; j < dimension; j++) {
                 if(k < plainTextBuilder.length()) matrix[i][j] = plainTextBuilder.charAt(k);
-                else matrix[i][j] = ' ';
-                k++;
+                else matrix[i][j] = ' ';                k++;
             }
         }
         return matrix;

@@ -3,9 +3,9 @@ package SDES;
 import java.util.Random;
 
 public class SubkeysGenerator {
-
+    public static boolean debug = false;
     public static int[] generateKey(int[] userDefinedKey){
-        Util.printBits("Provided key: ",userDefinedKey);
+        if(debug) Util.printBits("Provided key: ",userDefinedKey);
         return userDefinedKey;
     }
 
@@ -15,7 +15,7 @@ public class SubkeysGenerator {
 
         String BitString = String.format("%10s", Integer.toBinaryString(key))
                 .replace(' ', '0');
-        System.out.printf("Generated key: %s%n", BitString);
+        if(debug) System.out.printf("Generated key: %s%n", BitString);
 
         int[] bitArray = new int[10];
         for (int i = 0; i < bitArray.length; i++) {
@@ -33,7 +33,7 @@ public class SubkeysGenerator {
             permutedKey[i] = key[P10[i] - 1];
         }
 
-        Util.printBits("P10 applied: ", permutedKey);
+        if(debug) Util.printBits("P10 applied: ", permutedKey);
 
         return permutedKey;
     }
@@ -58,7 +58,7 @@ public class SubkeysGenerator {
             permutedKey[i] = key[P8[i] - 1];
         }
 
-        Util.printBits("P8 applied: ", permutedKey);
+        if(debug) Util.printBits("P8 applied: ", permutedKey);
 
         return permutedKey;
     }

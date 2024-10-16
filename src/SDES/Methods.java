@@ -1,9 +1,10 @@
 package SDES;
 
 public class Methods {
+    static boolean debug = false;
     public static int[] initialPermutation(int[] eightBlockBits){
 
-        Util.printBits("8-bit block: ", eightBlockBits);
+        if(debug) Util.printBits("8-bit block: ", eightBlockBits);
 
         int[] IP = {2, 6, 3, 1, 4, 8, 5, 7};
 
@@ -12,7 +13,7 @@ public class Methods {
             permutedBlock[i] = eightBlockBits[IP[i] - 1];
         }
 
-        Util.printBits("Initial Permutation of 8-bit block: ", permutedBlock);
+        if(debug) Util.printBits("Initial Permutation of 8-bit block: ", permutedBlock);
         return permutedBlock;
     }
     public static int[] expansionPermutation(int[] block){
@@ -23,7 +24,7 @@ public class Methods {
             expandedPermutedBlock[i] = block[EP[i] - 1];
         }
 
-        Util.printBits("Expanded Permutation: ", expandedPermutedBlock);
+        if(debug) Util.printBits("Expanded Permutation: ", expandedPermutedBlock);
         return expandedPermutedBlock;
     }
     public static int[] XOR(int[] EP, int[] K1) {
@@ -33,12 +34,12 @@ public class Methods {
             result[i] = EP[i] ^ K1[i];
         }
 
-        Util.printBits("Result of XOR operation: ", result);
+        if(debug) Util.printBits("Result of XOR operation: ", result);
 
         return result;
     }
     public static int[] f_k(int[] L, int[] R, int[] sk) {
-        System.out.println("------------------------ First get F(R,SK)" +
+        if(debug) System.out.println("------------------------ First get F(R,SK)" +
                 " -----------");
         int[] EP = Methods.expansionPermutation(R);
 
@@ -48,7 +49,7 @@ public class Methods {
                 {resultXOR[0], resultXOR[1], resultXOR[2], resultXOR[3]},
                 {resultXOR[4], resultXOR[5], resultXOR[6], resultXOR[7]},
         };
-        Util.printMatrix("Matrix to fed S0 and S1 box: ",matrix);
+        if(debug) Util.printMatrix("Matrix to fed S0 and S1 box: ",matrix);
 
         int[][] S0 = {
                 {1, 0, 3, 2},
@@ -57,7 +58,7 @@ public class Methods {
                 {3, 1, 3, 2}
         };
         int[] resultS0 = sBox(matrix[0], S0);
-        Util.printBits("Result of Sbox0: ", resultS0);
+        if(debug) Util.printBits("Result of Sbox0: ", resultS0);
 
         int[][] S1 = {
                 {0, 1, 2, 3},
@@ -66,15 +67,15 @@ public class Methods {
                 {2, 1, 0, 3}
         };
         int[] resultS1 = sBox(matrix[1], S1);
-        Util.printBits("Result of Sbox1: ", resultS1);
+        if(debug) Util.printBits("Result of Sbox1: ", resultS1);
 
         int[] previousP4 = Util.mergeArrays(resultS0, resultS1);
-        Util.printBits("Apply P4 to: ", previousP4);
+        if(debug) Util.printBits("Apply P4 to: ", previousP4);
 
         int[] resultP4 = permutation4(previousP4);
-        Util.printBits("Result of F(R,SK): ", resultP4);
+        if(debug) Util.printBits("Result of F(R,SK): ", resultP4);
 
-        System.out.println("------------------------ Do XOR of L and F(R,SK)" +
+        if(debug) System.out.println("------------------------ Do XOR of L and F(R,SK)" +
                 " -----------");
 
         return Util.mergeArrays(XOR(L, resultP4), R);
@@ -97,7 +98,7 @@ public class Methods {
             permutedBlock[i] = block[P4[i] - 1];
         }
 
-        Util.printBits("Permutation 4 applied: ", permutedBlock);
+        if(debug) Util.printBits("Permutation 4 applied: ", permutedBlock);
 
         return permutedBlock;
     }

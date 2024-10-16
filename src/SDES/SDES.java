@@ -3,7 +3,7 @@ package SDES;
 import java.util.*;
 
 public class SDES {
-
+    static boolean debug = false;
     public int[] GlobalK1;
     public int[] GlobalK2;
     static List<int[]> keys;
@@ -99,58 +99,71 @@ public class SDES {
         }
     }
 
+    public StringBuilder justDecryptEachBlock(StringBuilder cipherTextBuilder, int[] key){
+        StringBuilder justDecryptedTextBuilder = new StringBuilder();
+        for(int i = 0; i < cipherTextBuilder.length(); i++){
+            char character = cipherTextBuilder.charAt(i);
+            int[] currentBlock = Util.charToEightBitBlock(character);
+            int[] decryptedEightBitBlock = justDecryption(currentBlock,key);
+            char decryptedChar = Util.eightBitBlockToChar(decryptedEightBitBlock);
+            justDecryptedTextBuilder.append(decryptedChar);
+        }
+        //System.out.println(justDecryptedTextBuilder);
+        return justDecryptedTextBuilder;
+    }
+
     public void subkeysGeneration(int[] key){
-        System.out.println("------------------------ First, apply P10 to the key and circular left shift to L and R" +
+        if(debug) System.out.println("------------------------ First, apply P10 to the key and circular left shift to L and R" +
                 " of the result ------------------------");
 
         int[] P10 = SubkeysGenerator.permutation10(key);
 
         int[] L = Arrays.copyOfRange(P10, 0, key.length / 2);
-        Util.printBits("L: ", L);
+        if(debug) Util.printBits("L: ", L);
         int[] circularLeftShiftofL = SubkeysGenerator.circularLeftShift(L);
-        Util.printBits("Circular left shift of L: ", circularLeftShiftofL);
+        if(debug) Util.printBits("Circular left shift of L: ", circularLeftShiftofL);
 
         int[] R = Arrays.copyOfRange(P10, key.length / 2, key.length);
-        Util.printBits("R: ", R);
+        if(debug) Util.printBits("R: ", R);
         int[] circularLeftShiftofR = SubkeysGenerator.circularLeftShift(R);
-        Util.printBits("Circular left shift of R: ", circularLeftShiftofR);
+        if(debug) Util.printBits("Circular left shift of R: ", circularLeftShiftofR);
 
         int[] previousP8K1 = Util.mergeArrays(circularLeftShiftofL, circularLeftShiftofR);
-        Util.printBits("Circular left shift of R + Circular left shift of L: ",
+        if(debug) Util.printBits("Circular left shift of R + Circular left shift of L: ",
                 previousP8K1);
 
-        System.out.println("------------------------ Then apply P8 to obtain subkey K1" +
+        if(debug) System.out.println("------------------------ Then apply P8 to obtain subkey K1" +
                 " ------------------------");
 
         int[] K1 = SubkeysGenerator.permutation8(previousP8K1);
-        Util.printBits("K1: ", K1);
+        if(debug) Util.printBits("K1: ", K1);
 
-        System.out.println("------------------------ After that, we do a double circular left shif to" +
+        if(debug) System.out.println("------------------------ After that, we do a double circular left shif to" +
                 " Circular left shift of R and Circular left shift of L ------------------------");
 
         int[] doubleCircularLeftShiftofL = SubkeysGenerator.circularLeftShift(
                 SubkeysGenerator.circularLeftShift(circularLeftShiftofL)
         );
-        Util.printBits("Double circular left shift of L: ", doubleCircularLeftShiftofL);
+        if(debug) Util.printBits("Double circular left shift of L: ", doubleCircularLeftShiftofL);
 
         int[] doubleCircularLeftShiftofR = SubkeysGenerator.circularLeftShift(
                 SubkeysGenerator.circularLeftShift(circularLeftShiftofR)
         );
-        Util.printBits("Double circular left shift of R: ", doubleCircularLeftShiftofR);
+        if(debug) Util.printBits("Double circular left shift of R: ", doubleCircularLeftShiftofR);
 
         int[] previousP8K2 = Util.mergeArrays(doubleCircularLeftShiftofL, doubleCircularLeftShiftofR);
-        Util.printBits("Double circular left shift of R + Double circular left shift of L: ",
+        if(debug) Util.printBits("Double circular left shift of R + Double circular left shift of L: ",
                 previousP8K2);
 
-        System.out.println("------------------------ Finally, we apply P8 to obtain subkey K2" +
+        if(debug) System.out.println("------------------------ Finally, we apply P8 to obtain subkey K2" +
                 " ------------------------");
 
         int[] K2 = SubkeysGenerator.permutation8(previousP8K2);
-        Util.printBits("K2: ", K2);
+        if(debug) Util.printBits("K2: ", K2);
 
-        System.out.println("---------------- Keys --------------------");
-        Util.printBits("K1: ", K1);
-        Util.printBits("K2: ", K2);
+        if(debug) System.out.println("---------------- Keys --------------------");
+        if(debug) Util.printBits("K1: ", K1);
+        if(debug) Util.printBits("K2: ", K2);
         GlobalK1 = K1;
         GlobalK2 = K2;
 
@@ -194,6 +207,20 @@ public class SDES {
         Util.printBits("Encrypted 8-bit block: ", encrypted8BitBlock);
 
         return encrypted8BitBlock;
+    }
+
+    public int[] justDecryption(int[] currentBlock, int[] key){
+        subkeysGeneration(key);
+        int[] permutedBlock = Methods.initialPermutation(currentBlock);
+        int[] L = Arrays.copyOfRange(permutedBlock, 0, permutedBlock.length/2);
+        int[] R = Arrays.copyOfRange(permutedBlock, permutedBlock.length/2,
+                permutedBlock.length);
+        int [] resultFk = Methods.f_k(L,R,GlobalK2);
+        L = Arrays.copyOfRange(resultFk, resultFk.length / 2, resultFk.length);
+        R = Arrays.copyOfRange(resultFk, 0, resultFk.length / 2);
+        resultFk = Methods.f_k(L,R,GlobalK1);
+
+        return Methods.inversedIP(resultFk);
     }
 
     public int[] decryption(int[] currentBlock, int blockIndex){
