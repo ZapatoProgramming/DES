@@ -37,7 +37,7 @@ public class SubkeysGeneration
         subkeys = new List<BitArray>();
         BitArray key56bit = BitArrayOperations.Permute(keyBitArray, PC1);
         Console.WriteLine("----------------------- PC - 1 --------------------------");
-        BitArrayOperations.PrintBitArrayInMatrixForm(keyBitArray, 8, 7);
+        BitArrayOperations.PrintBitArrayInMatrixForm(key56bit, 4, 14);
 
         BitArray C = new BitArray(28);
         BitArray D = new BitArray(28);

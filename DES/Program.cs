@@ -51,9 +51,9 @@ class DES
 
     static void Main(string[] args)
     {
-        String plainText = "0000000000000000";
-        String key = "0000000000000000";
-        int rounds = 16;
+        String plainText = "00000000FFFFFFFF";
+        String key = "FFFFFFFF00000000";
+        int rounds = 1;
         BitArray bitKey = plainTextToHEX(key);
         List<BitArray> subkeys = generateSubkeys(bitKey, rounds);
         BitArray bitPlainText = plainTextToHEX(plainText);
